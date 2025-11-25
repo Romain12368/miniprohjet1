@@ -1,0 +1,104 @@
+#structure des trains
+trains = {
+    'TUN-PAR': {'places_total': 5, 'places_restantes': 5, 'passagers': set()},
+    'TUN-ROM': {'places_total': 3, 'places_restantes': 3, 'passagers': set()},
+    'TUN-MAD': {'places_total': 4, 'places_restantes': 4, 'passagers': set()},
+}
+
+#1afficher les trains
+def afficher_trains():
+    print("\n=== LISTE DES TRAJETS ===")
+    for trajet, infos in trains.items():
+        print(f"{trajet} → {infos['places_restantes']} places restantes / {infos['places_total']}")
+    print()
+
+#2reserver une place
+def reserver_place():
+    nom = input("Nom du passager : ").strip().title()
+    trajet = input("Code du trajet : ").strip().upper()
+    if trajet not in trains:
+        print("Trajet introuvable.\n")
+        return
+    if trains[trajet]['places_restantes'] == 0:
+        print("Plus de places disponibles.\n")
+        return
+    if nom in trains[trajet]['passagers']:
+        print("Passager déjà enregistré.\n")
+        return
+        #ajout du passager
+    trains[trajet]['passagers'].add(nom)
+    trains[trajet]['places_restantes'] -= 1
+        #numero de place calcul
+    numero_place = trains[trajet]['places_total'] - trains[trajet]['places_restantes']
+    ticket = (nom, trajet, numero_place)
+    print(f"Réservation effectuée. Ticket : {ticket}\n")
+
+#3annuler une reservation
+def annuler_reservation():
+    nom = input("Nom du passager : ").strip().title()
+    trajet = input("Code du trajet : ").strip().upper()
+    if trajet not in trains:
+        print("Trajet introuvable.\n")
+        return
+    if nom not in trains[trajet]['passagers']:
+        print("Ce passager n'a pas de réservation.\n")
+        return
+    trains[trajet]['passagers'].remove(nom)
+    trains[trajet]['places_restantes'] += 1
+    print("Réservation annulée.\n")
+
+#4afficher les passager d'un train
+def afficher_passagers():
+    trajet = input("Code du trajet : ").strip().upper()
+    if trajet not in trains:
+        print("Trajet introuvable.\n")
+        return
+    passagers = sorted(trains[trajet]['passagers'])
+    print(f"\n=== PASSAGERS DU TRAIN {trajet} ===")
+    if not passagers:
+        print("Aucun passager.\n")
+    else:
+        for p in passagers:
+            print(f"- {p}")
+        print()
+
+#5afficher les trains complets
+def afficher_trains_complets():
+    print("\n=== TRAINS COMPLETS ===")
+    complets = [t for t, info in trains.items() if info['places_restantes'] == 0]
+    if not complets:
+        print("Aucun train complet.\n")
+    else:
+        for trajet in complets:
+            print(f"- {trajet}")
+        print()
+
+#menu principal
+def menu():
+    while True:
+        print("""
+=== MENU RÉSERVATION TRAIN ===
+1  Afficher les trains
+2  Réserver une place
+3  Annuler une réservation
+4  Afficher les passagers d’un train
+5  Voir les trains complets
+0  Quitter
+""")
+        choix = input("Votre choix : ").strip()
+        if choix == "1":
+            afficher_trains()
+        elif choix == "2":
+            reserver_place()
+        elif choix == "3":
+            annuler_reservation()
+        elif choix == "4":
+            afficher_passagers()
+        elif choix == "5":
+            afficher_trains_complets()
+        elif choix == "0":
+            break
+        else:
+            print("Choix invalide.\n")
+
+menu()
